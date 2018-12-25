@@ -64,17 +64,26 @@ public class Network {
                     for (int k = 0; k < layerNeurons; k++) {
                         currentDelta *= neuronOutput.getWeights().get(k) * currentNeuralOutput;
                         double currentGrad = currentNeuralOutput * outDelta;
+                        double biasGrad = outDelta * 1;
+                        double newBias = epsilon * biasGrad + alpha * currentNeuron.getBias();
+                        newBias += neuronOutput.getBias();
                         newValue = epsilon * currentGrad + alpha * neuronOutput.getOldWeights().get(k);
                         newValue += neuronOutput.getWeights().get(k);
                         neuronOutput.setWeightsAt(k, newValue);
+                        neuronOutput.setBias(newBias);
                     }
                 } else {
                     for (int k = 0; k < currentNeuron.getWeights().size(); k++) {
                         currentDelta *= lastNeuron.getWeights().get(k) * currentNeuralOutput;
                         double currentGrad = currentNeuralOutput * lastDelta.get(k);
-                        newValue = epsilon * currentGrad + alpha * neuronOutput.getOldWeights().get(k);
+                        newValue = epsilon * currentGrad + alpha * lastNeuron.getOldWeights().get(k);
                         newValue += currentNeuron.getWeights().get(k);
                         currentNeuron.setWeightsAt(k, newValue);
+
+                        double biasGrad = lastDelta.get(k) * 1;
+                        double newBias = epsilon * biasGrad + alpha * currentNeuron.getBias();
+                        newBias += lastNeuron.getBias();
+                        currentNeuron.setBias(newBias);
                     }
                 }
                 lastNeuron = currentNeuron;

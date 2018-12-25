@@ -36,7 +36,7 @@ public class Main {
         output.get(3).add((double) 0);
 
 
-        Network network = new Network(input.get(3), output.get(3), 5,2, 5, 0.2, 0.05);
+        Network network = new Network(input.get(3), output.get(3), 2,2, 5, 0.2, 0.05);
         network.feedForward();
 
 
