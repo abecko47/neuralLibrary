@@ -155,4 +155,23 @@ public class Network {
         }
         return error / output.size();
     }
+
+    public void analyze() {
+        for (int i = 0; i < input.size(); i++) {
+            System.out.println("Desired: " + output.get(i).get(0) + " Produced: " + neuralOutput.get(i));
+        }
+    }
+
+    public void setInput(ArrayList<ArrayList<Double>> input) {
+        this.input.clear();
+        this.input.addAll(input);
+    }
+
+    public void setOutput(ArrayList<ArrayList<Double>> output) {
+        this.output.clear();
+        this.output.addAll(output);
+        for (int n = 0; n < this.output.size(); n++) {
+            neuronOutput.add(new Neuron(layerNeurons));
+        }
+    }
 }

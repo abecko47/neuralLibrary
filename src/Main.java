@@ -1,62 +1,75 @@
+import com.opencsv.CSVReader;
 import networkcore.Network;
 //import networkcore.NetworkList;
 import networkcore.Neuron;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Main {
-    public static void main(String [] args) {
-        ArrayList<ArrayList<Double>> input = new ArrayList();
-        ArrayList<ArrayList<Double>> output = new ArrayList();
 
-        ArrayList<Network> networks = new ArrayList<>();
+    public static void main(String [] args) throws IOException {
+        ArrayList<ArrayList<Double>> input = new ArrayList<>();
+        ArrayList<ArrayList<Double>> output = new ArrayList<>();
 
-        input.add(new ArrayList());
-        input.get(0).add((double) 0);
-        input.get(0).add((double) 0);
-        output.add(new ArrayList());
-        output.get(0).add((double) 0);
+        CSVReader reader = new CSVReader(new FileReader("train data/banana/banana_2.csv"));
+        String[] nextLine;
+        while ((nextLine = reader.readNext()) != null) {
+            ArrayList<Double> currentInput = new ArrayList<>();
+            ArrayList<Double> currentOutput = new ArrayList<>();
+            currentInput.add(Double.valueOf(nextLine[0]) / 100);
+            currentInput.add(Double.valueOf(nextLine[1]) / 100);
+            currentOutput.add(Double.valueOf(nextLine[2]));
 
-        input.add(new ArrayList());
-        input.get(1).add((double) 0);
-        input.get(1).add((double) 1);
-        output.add(new ArrayList());
-        output.get(1).add((double) 1);
+            input.add(currentInput);
+            output.add(currentOutput);
+        }
 
-        input.add(new ArrayList());
-        input.get(2).add((double) 1);
-        input.get(2).add((double) 0);
-        output.add(new ArrayList());
-        output.get(2).add((double) 1);
+        ArrayList<ArrayList<Double>> testInput = new ArrayList<>();
+        ArrayList<ArrayList<Double>> testOutput = new ArrayList<>();
+        ArrayList<ArrayList<Double>> trainInput = new ArrayList<>(input);
+        ArrayList<ArrayList<Double>> trainOutput = new ArrayList<>(output);
 
-        input.add(new ArrayList());
-        input.get(3).add((double) 1);
-        input.get(3).add((double) 1);
-        output.add(new ArrayList());
-        output.get(3).add((double) 0);
+//        Random rand = new Random();
+//        for (int i = trainInput.size()-1; i >= testInput.size(); i--) {
+//            int a = rand.nextInt(i);
+//            testInput.add(trainInput.get(a));
+//            testOutput.add(trainOutput.get(a));
+//            trainInput.remove(a);
+//            trainOutput.remove(a);
+//        }
 
+        for (int i = 0; i < output.size(); i++) {
+            if (i % 10 == 0) {
+                trainInput.add(input.get(i));
+                trainOutput.add(output.get(i));
+            } else {
+                testInput.add(input.get(i));
+                testOutput.add(output.get(i));
+            }
+        }
 
-        Network network = new Network(input, output, 2,2, 5, 0.2, 0.05);
+        Network network = new Network(trainInput, trainOutput, 5,2, 5, 0.2, 0.05);
         network.feedForward();
 
-
-        for (int i = 0; i < 50; i++) {
+        while (network.countError() > 0.01){
             network.backPropagation();
             network.feedForward();
         }
-        System.out.println(network.getNeuralOutput());
+        network.analyze();
+
+        System.out.println("\nTest Inputs/Outputs: ");
+        network.setInput(testInput);
+        network.setOutput(testOutput);
+        network.feedForward();
+        network.analyze();
 
 
-//        for (int i = 0; i < input.size(); i++) {
-//            networks.add(new Network(input.get(i), output.get(i), 2, 2));
-//        }
-//
-//        NetworkList nlist = new NetworkList();
-//
-//        networks.forEach((n) -> n.feedForward());
-//        System.out.println(nlist.countError(networks) + "\n");
-////        networks.forEach((n) -> n.backPropagation());
-//        networks.forEach((n) -> n.feedForward());
-//        System.out.println(nlist.countError(networks));
     }
 }
