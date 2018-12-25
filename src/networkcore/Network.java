@@ -3,21 +3,25 @@ package networkcore;
 import java.util.ArrayList;
 
 public class Network {
-    private ArrayList<Double> input = new ArrayList();
-    private ArrayList<Double> output = new ArrayList();
-    private ArrayList<Layer> hidden = new ArrayList();
+    private ArrayList<Double> input = new ArrayList<>();
+    private ArrayList<Double> output = new ArrayList<>();
+    private ArrayList<Layer> hidden = new ArrayList<>();
 
     private int layers;
+    private int layerNeurons;
     private Neuron neuronOutput;
     private double neuralOutput = 0;
 
-    private final double epsilon = 0.2;
-    private final double alpha = 0.5;
+    private double epsilon;
+    private double alpha;
 
-    public Network(ArrayList input, ArrayList output, int layers, int inputCount, int layerNeurons) {
+    public Network(ArrayList<Double> input, ArrayList<Double> output, int layers, int inputCount, int layerNeurons, double epsilon, double alpha) {
         this.input.addAll(input);
         this.output.addAll(output);
         this.layers = layers;
+        this.layerNeurons = layerNeurons;
+        this.epsilon = epsilon;
+        this.alpha = alpha;
         neuronOutput = new Neuron(layerNeurons);
         hidden.add(new Layer(layerNeurons, inputCount, input));
 
@@ -43,11 +47,45 @@ public class Network {
 
         neuronOutput.setInputs(currentOutput);
         neuralOutput = neuronOutput.output();
+        System.out.println("Error: " + countError());
     }
 
     public void backPropagation() {
         double outDelta = neuronOutput.countOutputDelta(output.get(0));
-        System.out.println(outDelta);
+        Neuron lastNeuron = null;
+        ArrayList<Double> lastDelta = new ArrayList<>();
+        for (int i = hidden.size()-1; i >= 0; i--) {
+            for (int j = hidden.get(i).getNeurons().size()-1; j >= 0; j--) {
+                Neuron currentNeuron = hidden.get(i).getNeurons().get(j);
+                double currentNeuralOutput = currentNeuron.output();
+                double currentDelta = currentNeuron.sigmoidDerivative(currentNeuralOutput);
+                double newValue = 0;
+                if(i == hidden.size()-1) {
+                    for (int k = 0; k < layerNeurons; k++) {
+                        currentDelta *= neuronOutput.getWeights().get(k) * currentNeuralOutput;
+                        double currentGrad = currentNeuralOutput * outDelta;
+                        newValue = epsilon * currentGrad + alpha * neuronOutput.getOldWeights().get(k);
+                        newValue += neuronOutput.getWeights().get(k);
+                        neuronOutput.setWeightsAt(k, newValue);
+                    }
+                } else {
+                    for (int k = 0; k < currentNeuron.getWeights().size(); k++) {
+                        currentDelta *= lastNeuron.getWeights().get(k) * currentNeuralOutput;
+                        double currentGrad = currentNeuralOutput * lastDelta.get(k);
+                        newValue = epsilon * currentGrad + alpha * neuronOutput.getOldWeights().get(k);
+                        newValue += currentNeuron.getWeights().get(k);
+                        currentNeuron.setWeightsAt(k, newValue);
+                    }
+                }
+                lastNeuron = currentNeuron;
+                lastDelta.add(currentDelta);
+            }
+            if(i != hidden.size()-1) {
+                for (int j = 0; j < hidden.get(i).getNeurons().size()-1; j++) {
+                    lastDelta.remove(0);
+                }
+            }
+        }
     }
 
     public double getNeuralOutput() {
@@ -56,5 +94,9 @@ public class Network {
 
     public ArrayList<Double> getOutput() {
         return output;
+    }
+
+    public double countError() {
+        return Math.pow(output.get(0) - neuralOutput, 2);
     }
 }

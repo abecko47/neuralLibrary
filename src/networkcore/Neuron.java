@@ -18,7 +18,9 @@ public class Neuron {
         bias = rand.nextDouble();
         for (int i = 0; i < size; i++) {
             weights.add(rand.nextDouble());
+            oldWeights.add(0.0);
         }
+        oldWeights.set(0, 1.0);
     }
 
     public double sigmoid(double x) {
@@ -60,6 +62,10 @@ public class Neuron {
         this.weights.addAll(weights);
     }
 
+    public void setWeightsAt(int index, double value) {
+        weights.set(index, value);
+    }
+
     public void addInput(double input) {
         inputs.add(input);
     }
@@ -72,12 +78,21 @@ public class Neuron {
         this.countedOutput = countedOutput;
     }
 
+    public ArrayList<Double> getOldWeights() {
+        return oldWeights;
+    }
+
     public double output() {
         double input = 0;
         for (int i = 0; i < inputsCount; i++) {
             input += inputs.get(i) * weights.get(i);
         }
-        oldWeights.addAll(weights);
+
+        if(oldWeights.get(0) != 1.0) {
+            oldWeights.clear();
+            oldWeights.addAll(weights);
+        } else oldWeights.set(0, 0.0);
+
         oldBias = bias;
         countedOutput = sigmoid(input + bias);
         return countedOutput;
