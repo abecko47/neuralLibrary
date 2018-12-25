@@ -10,7 +10,8 @@ public class Layer {
     }
 
     public void setNeurons(ArrayList<Neuron> neurons) {
-        this.neurons = neurons;
+        this.neurons.clear();
+        this.neurons.addAll(neurons);
     }
 
     public Layer(int size, int inputs) {

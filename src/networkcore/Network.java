@@ -1,17 +1,15 @@
 package networkcore;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Network {
     private ArrayList<Double> input = new ArrayList();
     private ArrayList<Double> output = new ArrayList();
     private ArrayList<Layer> hidden = new ArrayList();
 
-    private int hiddenCount;
-    private Neuron neuralOutput = new Neuron(5);
-    private double outputNeural = 0;
+    private int layers;
+    private Neuron neuronOutput;
+    private double neuralOutput = 0;
 
     private final double epsilon = 0.2;
     private final double alpha = 0.5;
@@ -19,6 +17,8 @@ public class Network {
     public Network(ArrayList input, ArrayList output, int layers, int inputCount, int layerNeurons) {
         this.input.addAll(input);
         this.output.addAll(output);
+        this.layers = layers;
+        neuronOutput = new Neuron(layerNeurons);
         hidden.add(new Layer(layerNeurons, inputCount, input));
 
         ArrayList defaultInput = new ArrayList();
@@ -28,30 +28,30 @@ public class Network {
             hidden.add(new Layer(layerNeurons, layerNeurons, defaultInput));
         }
 
+
     }
 
     public void feedForward() {
-        ArrayList output = new ArrayList();
-        output.addAll(input);
+        ArrayList<Double> currentOutput = new ArrayList<>(input);
         for (Layer layer: hidden) {
-            layer.updateInput(input);
-            output.clear();
+            layer.updateInput(currentOutput);
+            currentOutput.clear();
             for (Neuron neuron: layer.getNeurons()) {
-                output.add(neuron.output());
+                currentOutput.add(neuron.output());
             }
         }
 
-        neuralOutput.setInputs(output);
-        outputNeural = neuralOutput.output();
-        System.out.println(outputNeural);
+        neuronOutput.setInputs(currentOutput);
+        neuralOutput = neuronOutput.output();
     }
 
     public void backPropagation() {
-
+        double outDelta = neuronOutput.countOutputDelta(output.get(0));
+        System.out.println(outDelta);
     }
 
-    public double getOutputNeural() {
-        return outputNeural;
+    public double getNeuralOutput() {
+        return neuralOutput;
     }
 
     public ArrayList<Double> getOutput() {

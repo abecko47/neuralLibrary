@@ -36,13 +36,11 @@ public class Main {
         output.get(3).add((double) 0);
 
 
-        Network network = new Network(input.get(3), output.get(3), 1,2, 5);
+        Network network = new Network(input.get(3), output.get(3), 2,2, 5);
         network.feedForward();
-        network.feedForward();
-        network.feedForward();
-        network.feedForward();
-        network.feedForward();
-        network.feedForward();
+        network.backPropagation();
+
+
 //        for (int i = 0; i < input.size(); i++) {
 //            networks.add(new Network(input.get(i), output.get(i), 2, 2));
 //        }

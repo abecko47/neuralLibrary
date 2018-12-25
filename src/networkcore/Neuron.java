@@ -41,8 +41,9 @@ public class Neuron {
         return inputs;
     }
 
-    public void setInputs(ArrayList inputs) {
-        this.inputs = inputs;
+    public void setInputs(ArrayList<Double> inputs) {
+        this.inputs.clear();
+        this.inputs.addAll(inputs);
         inputsCount = inputs.size();
     }
 
@@ -55,7 +56,8 @@ public class Neuron {
     }
 
     public void setWeights(ArrayList<Double> weights) {
-        this.weights = weights;
+        this.weights.clear();
+        this.weights.addAll(weights);
     }
 
     public void addInput(double input) {
@@ -79,6 +81,10 @@ public class Neuron {
         oldBias = bias;
         countedOutput = sigmoid(input + bias);
         return countedOutput;
+    }
+
+    public double countOutputDelta(double ideal) {
+        return (ideal - countedOutput) * sigmoidDerivative(countedOutput);
     }
 
 }

@@ -7,7 +7,7 @@ public class NetworkList {
 
     public double countError(ArrayList<Network> networks){
         for (Network n: networks) {
-            currentError += Math.pow(n.getOutputNeural() - n.getOutput().get(0), 2);
+            currentError += Math.pow(n.getNeuralOutput() - n.getOutput().get(0), 2);
         }
         return currentError / networks.size();
     }
