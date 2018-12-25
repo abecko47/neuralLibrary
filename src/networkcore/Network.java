@@ -139,8 +139,13 @@ public class Network {
         }
     }
     //get neural output
-    public ArrayList<Double> getNeuralOutput() {
-        return neuralOutput;
+    public ArrayList<ArrayList<Double>> getNeuralOutput() {
+        ArrayList<ArrayList<Double>> output = new ArrayList<>();
+        for (int i = 0; i < this.output.size(); i++) {
+            output.add(new ArrayList<Double>());
+            output.get(i).add(neuralOutput.get(i));
+        }
+        return output;
     }
 
     // get gotten output
@@ -173,5 +178,9 @@ public class Network {
         for (int n = 0; n < this.output.size(); n++) {
             neuronOutput.add(new Neuron(layerNeurons));
         }
+    }
+
+    public ArrayList<ArrayList<Double>> getInput() {
+        return input;
     }
 }
