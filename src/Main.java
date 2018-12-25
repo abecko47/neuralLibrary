@@ -18,8 +18,8 @@ public class Main {
         output.get(0).add((double) 0);
 
         input.add(new ArrayList());
-        input.get(1).add((double) 0.3);
-        input.get(1).add((double) 0.17);
+        input.get(1).add((double) 0);
+        input.get(1).add((double) 1);
         output.add(new ArrayList());
         output.get(1).add((double) 1);
 
@@ -36,17 +36,15 @@ public class Main {
         output.get(3).add((double) 0);
 
 
-        Network network = new Network(input.get(3), output.get(3), 2,2, 5, 0.2, 0.05);
+        Network network = new Network(input, output, 2,2, 5, 0.2, 0.05);
         network.feedForward();
 
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             network.backPropagation();
             network.feedForward();
         }
         System.out.println(network.getNeuralOutput());
-
-
 
 
 //        for (int i = 0; i < input.size(); i++) {
