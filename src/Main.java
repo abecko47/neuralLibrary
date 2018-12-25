@@ -1,5 +1,6 @@
 import networkcore.Network;
 import networkcore.NetworkList;
+import networkcore.Neuron;
 
 import java.util.ArrayList;
 
@@ -34,13 +35,24 @@ public class Main {
         output.add(new ArrayList());
         output.get(3).add((double) 0);
 
-        for (int i = 0; i < input.size(); i++) {
-            networks.add(new Network(input.get(i), output.get(i), 2, 2));
-        }
 
-        NetworkList nlist = new NetworkList();
-        networks.forEach((n) -> n.feedForward());
-        System.out.println(nlist.countError(networks));
-
+        Network network = new Network(input.get(3), output.get(3), 1,2, 5);
+        network.feedForward();
+        network.feedForward();
+        network.feedForward();
+        network.feedForward();
+        network.feedForward();
+        network.feedForward();
+//        for (int i = 0; i < input.size(); i++) {
+//            networks.add(new Network(input.get(i), output.get(i), 2, 2));
+//        }
+//
+//        NetworkList nlist = new NetworkList();
+//
+//        networks.forEach((n) -> n.feedForward());
+//        System.out.println(nlist.countError(networks) + "\n");
+////        networks.forEach((n) -> n.backPropagation());
+//        networks.forEach((n) -> n.feedForward());
+//        System.out.println(nlist.countError(networks));
     }
 }

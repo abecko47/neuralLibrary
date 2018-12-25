@@ -6,8 +6,11 @@ import java.util.Random;
 public class Neuron {
     private double bias = 0;
     private int inputsCount = 0;
+    private double countedOutput;
     private ArrayList<Double> inputs = new ArrayList();
     private ArrayList<Double> weights = new ArrayList();
+    private ArrayList<Double> oldWeights = new ArrayList();
+    private double oldBias;
 
     public Neuron(int size) {
         this.inputsCount = size;
@@ -40,6 +43,11 @@ public class Neuron {
 
     public void setInputs(ArrayList inputs) {
         this.inputs = inputs;
+        inputsCount = inputs.size();
+    }
+
+    public void updateInput(int index, double value) {
+        inputs.set(index, value);
     }
 
     public ArrayList<Double> getWeights() {
@@ -54,11 +62,23 @@ public class Neuron {
         inputs.add(input);
     }
 
+    public double getCountedOutput() {
+        return countedOutput;
+    }
+
+    public void setCountedOutput(double countedOutput) {
+        this.countedOutput = countedOutput;
+    }
+
     public double output() {
         double input = 0;
         for (int i = 0; i < inputsCount; i++) {
             input += inputs.get(i) * weights.get(i);
         }
-        return sigmoid(input + bias);
+        oldWeights.addAll(weights);
+        oldBias = bias;
+        countedOutput = sigmoid(input + bias);
+        return countedOutput;
     }
+
 }

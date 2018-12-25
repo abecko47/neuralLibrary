@@ -1,65 +1,47 @@
 package networkcore;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Network {
     private ArrayList<Double> input = new ArrayList();
     private ArrayList<Double> output = new ArrayList();
-    private ArrayList<ArrayList<Neuron>> hidden = new ArrayList<ArrayList<Neuron>>();
+    private ArrayList<Layer> hidden = new ArrayList();
 
     private int hiddenCount;
-    private Neuron neuralOutput = new Neuron(1);
+    private Neuron neuralOutput = new Neuron(5);
     private double outputNeural = 0;
 
-    public Network(ArrayList input, ArrayList output, int hiddens, int inputs) {
-        this.input = input;
-        this.output = output;
-        this.hiddenCount = hiddens;
-        Random rand = new Random();
+    private final double epsilon = 0.2;
+    private final double alpha = 0.5;
 
+    public Network(ArrayList input, ArrayList output, int layers, int inputCount, int layerNeurons) {
+        this.input.addAll(input);
+        this.output.addAll(output);
+        hidden.add(new Layer(layerNeurons, inputCount, input));
 
-        hidden.add(new ArrayList<Neuron>());
-        for (int i = 0; i < 5; i++) {
-            hidden.get(0).add(new Neuron(inputs));
-            hidden.get(0).get(i).setBias(rand.nextDouble());
-            for (int j = 0; j < inputs; j++)
-            hidden.get(0).get(i).addInput((Double) input.get(j));
-        }
-        for (int i = 1; i < hiddens; i++) {
-            hidden.add(new ArrayList<Neuron>());
-            for (int j = 0; j < 5; j++) {
-                hidden.get(i).add(new Neuron(5));
-                hidden.get(i).get(j).setBias(rand.nextDouble());
-                for (int k = 0; k < 5; k++)
-                hidden.get(i).get(j).addInput(0);
-            }
+        ArrayList defaultInput = new ArrayList();
+        for (int j = 0; j < layerNeurons; j++) defaultInput.add(0.0);
+
+        for (int i = 1; i < layers; i++) {
+            hidden.add(new Layer(layerNeurons, layerNeurons, defaultInput));
         }
 
     }
 
     public void feedForward() {
-        for (int i = 0; i < 5; i++) {
-            hidden.get(0).get(i).setInputs(input);
-        }
-
-        for (int i = 0; i < hiddenCount-1; i++) {
-            ArrayList currentInputs = new ArrayList();
-            for (int j = 0; j < hidden.get(i).size(); j++){
-                currentInputs.add(hidden.get(i).get(j).output());
+        ArrayList output = new ArrayList();
+        output.addAll(input);
+        for (Layer layer: hidden) {
+            layer.updateInput(input);
+            output.clear();
+            for (Neuron neuron: layer.getNeurons()) {
+                output.add(neuron.output());
             }
-
-            for (int j = 0; j < hidden.get(i).size(); j++){
-                hidden.get(i+1).get(j).setInputs(currentInputs);
-            }
-
         }
 
-        ArrayList lastInputs = new ArrayList();
-        for (int j = 0; j < hidden.get(hiddenCount-1).size(); j++){
-            lastInputs.add(hidden.get(hiddenCount-1).get(j).output());
-        }
-        neuralOutput.setInputs(lastInputs);
+        neuralOutput.setInputs(output);
         outputNeural = neuralOutput.output();
         System.out.println(outputNeural);
     }
