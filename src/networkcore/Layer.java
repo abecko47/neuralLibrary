@@ -1,3 +1,9 @@
+/*
+* Class Layer
+* represent arraylist of neurons
+* made for easier access in feed forward (potentially in back prop)
+* */
+
 package networkcore;
 
 import java.util.ArrayList;

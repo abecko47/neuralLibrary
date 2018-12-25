@@ -1,3 +1,8 @@
+/*
+* Neuron Class
+* have inputs and wages on inputs and wages
+* */
+
 package networkcore;
 
 import java.util.ArrayList;
@@ -13,6 +18,7 @@ public class Neuron {
     private double oldBias;
 
     public Neuron(int size) {
+        //init wages
         this.inputsCount = size;
         Random rand = new Random();
         bias = rand.nextDouble();
@@ -23,6 +29,8 @@ public class Neuron {
         oldWeights.set(0, 1.0);
     }
 
+
+    //function and derivative
     public double sigmoid(double x) {
         return (1/( 1 + Math.pow(Math.E,(-1*x))));
     }
@@ -82,6 +90,7 @@ public class Neuron {
         return oldWeights;
     }
 
+    //count output and dont save old weights if it is first feed forward
     public double output() {
         double input = 0;
         for (int i = 0; i < inputsCount; i++) {
